@@ -439,6 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new InteractiveEffects();
     new PerformanceOptimizer();
     new ProjectInteractions();
+    new WaveAnimation();
     
     // Add loading complete class to body
     document.body.classList.add('loaded');
@@ -469,6 +470,173 @@ window.addEventListener('error', (e) => {
 });
 
 // ===========================================
+// WAVE ANIMATION CANVAS
+// ===========================================
+
+class WaveAnimation {
+    constructor() {
+        this.canvas = document.getElementById('wave-canvas');
+        this.ctx = null;
+        this.waves = [];
+        this.animationId = null;
+        this.time = 0;
+        
+        if (this.canvas) {
+            this.init();
+        }
+    }
+
+    init() {
+        this.ctx = this.canvas.getContext('2d');
+        this.setupCanvas();
+        this.createWaves();
+        this.animate();
+        
+        // Handle window resize
+        window.addEventListener('resize', () => this.handleResize());
+    }
+
+    setupCanvas() {
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        
+        // Set canvas size
+        this.canvas.width = rect.width * dpr;
+        this.canvas.height = rect.height * dpr;
+        this.canvas.style.width = rect.width + 'px';
+        this.canvas.style.height = rect.height + 'px';
+        
+        // Scale context for high DPI displays
+        this.ctx.scale(dpr, dpr);
+        
+        this.width = rect.width;
+        this.height = rect.height;
+    }
+
+    createWaves() {
+        this.waves = [
+            {
+                amplitude: 30,
+                frequency: 0.01,
+                baseSpeed: 0.04,
+                speed: 0.04,
+                speedVariation: 0.01,
+                offset: 0,
+                color: 'rgba(0, 180, 216, 0.15)',
+                baseY: this.height * 0.7,
+                turbulence: 0.3
+            },
+            {
+                amplitude: 25,
+                frequency: 0.015,
+                baseSpeed: -0.03,
+                speed: -0.03,
+                speedVariation: 0.008,
+                offset: Math.PI / 4,
+                color: 'rgba(57, 255, 20, 0.1)',
+                baseY: this.height * 0.6,
+                turbulence: 0.25
+            },
+            {
+                amplitude: 40,
+                frequency: 0.008,
+                baseSpeed: 0.05,
+                speed: 0.05,
+                speedVariation: 0.012,
+                offset: Math.PI / 2,
+                color: 'rgba(144, 224, 239, 0.12)',
+                baseY: this.height * 0.8,
+                turbulence: 0.4
+            },
+            {
+                amplitude: 20,
+                frequency: 0.02,
+                baseSpeed: -0.06,
+                speed: -0.06,
+                speedVariation: 0.016,
+                offset: Math.PI,
+                color: 'rgba(202, 240, 248, 0.08)',
+                baseY: this.height * 0.5,
+                turbulence: 0.2
+            }
+        ];
+    }
+
+    updateWaveSpeed(wave) {
+        // Crear variación suave y continua usando funciones sinusoidales
+        // Cada onda tiene su propia frecuencia de variación de velocidad
+        const speedOscillation = Math.sin(this.time * 0.005 + wave.offset) * wave.speedVariation;
+        const speedOscillation2 = Math.sin(this.time * 0.003 + wave.offset * 2) * (wave.speedVariation * 0.5);
+        
+        // Aplicar variación suave sin saltos bruscos
+        wave.speed = wave.baseSpeed + speedOscillation + speedOscillation2;
+    }
+
+    drawWave(wave) {
+        // Update wave speed with random variation
+        this.updateWaveSpeed(wave);
+        
+        this.ctx.beginPath();
+        this.ctx.fillStyle = wave.color;
+        
+        // Start from bottom left
+        this.ctx.moveTo(0, this.height);
+        
+        // Draw wave curve with natural turbulence
+        for (let x = 0; x <= this.width; x += 2) {
+            // Main wave with current variable speed
+            const mainWave = Math.sin(x * wave.frequency + this.time * wave.speed + wave.offset) * wave.amplitude;
+            
+            // Secondary harmonics for more natural movement
+            const harmony1 = Math.sin(x * wave.frequency * 0.5 + this.time * wave.speed * 1.5) * (wave.amplitude * 0.3);
+            const harmony2 = Math.sin(x * wave.frequency * 1.8 + this.time * wave.speed * 0.7) * (wave.amplitude * 0.15);
+            
+            // Add subtle turbulence noise
+            const turbulenceNoise = (Math.sin(x * 0.05 + this.time * 0.1) * Math.cos(x * 0.03 + this.time * 0.08)) * wave.turbulence;
+            
+            const y = wave.baseY + mainWave + harmony1 + harmony2 + turbulenceNoise;
+            
+            this.ctx.lineTo(x, y);
+        }
+        
+        // Close the path to bottom
+        this.ctx.lineTo(this.width, this.height);
+        this.ctx.lineTo(0, this.height);
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
+
+    animate() {
+        // Clear canvas
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        
+        // Draw all waves
+        this.waves.forEach(wave => this.drawWave(wave));
+        
+        // Update time
+        this.time += 0.5;
+        
+        // Continue animation
+        this.animationId = requestAnimationFrame(() => this.animate());
+    }
+
+    handleResize() {
+        clearTimeout(this.resizeTimeout);
+        this.resizeTimeout = setTimeout(() => {
+            this.setupCanvas();
+            this.createWaves();
+        }, 100);
+    }
+
+    destroy() {
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
+        window.removeEventListener('resize', this.handleResize);
+    }
+}
+
+// ===========================================
 // EXPORTS FOR POTENTIAL MODULE USAGE
 // ===========================================
 
@@ -477,6 +645,7 @@ if (typeof module !== 'undefined' && module.exports) {
         Navigation,
         ScrollAnimations,
         InteractiveEffects,
-        Utils
+        Utils,
+        WaveAnimation
     };
 }

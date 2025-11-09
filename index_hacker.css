@@ -195,53 +195,31 @@ body {
     position: relative;
     padding: var(--section-padding) 20px;
     background: 
-        radial-gradient(circle at 20% 80%, rgba(57, 255, 20, 0.05) 0%, transparent 60%),
-        radial-gradient(circle at 80% 20%, rgba(0, 180, 216, 0.1) 0%, transparent 60%),
         linear-gradient(180deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
     overflow: hidden;
 }
 
+/* Canvas para animación de ondas JavaScript */
 .hero::before {
     content: '';
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
-    width: 200%;
-    height: 200px;
-    background: 
-        repeating-linear-gradient(
-            90deg,
-            transparent,
-            rgba(0, 180, 216, 0.1) 2px,
-            transparent 4px,
-            transparent 40px
-        );
-    animation: wave-flow 8s linear infinite;
+    width: 100%;
+    height: 100%;
     z-index: 0;
+    pointer-events: none;
 }
 
-.hero::after {
-    content: '';
+#wave-canvas {
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
-    width: 200%;
-    height: 100px;
-    background: 
-        repeating-linear-gradient(
-            85deg,
-            transparent,
-            rgba(57, 255, 20, 0.05) 1px,
-            transparent 2px,
-            transparent 60px
-        );
-    animation: wave-flow 12s linear infinite reverse;
-    z-index: 1;
-}
-
-@keyframes wave-flow {
-    0% { transform: translateX(-50%); }
-    100% { transform: translateX(0%); }
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.6;
 }
 
 .hero-content {
