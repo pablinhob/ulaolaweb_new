@@ -111,16 +111,28 @@ body {
     font-family: var(--font-mono);
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--accent-green);
-    text-shadow: 0 0 10px var(--accent-green);
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
 }
-
-.nav-logo::before {
-    content: "~/";
-    margin-right: 0.5rem;
-    color: var(--accent-wave);
-    text-shadow: 0 0 8px var(--accent-wave);
+.nav-logo img {
+    margin-right: 10px;
+}
+.nav-logo a:hover,
+.nav-logo a:focus {
+    text-decoration: none;
+    color: inherit;
+    outline: none;
+}
+.logo-image {
+    height: 1.5rem;
+    width: auto;
 }
 
 .nav-tagline {
@@ -871,10 +883,10 @@ body {
 }
 
 .footer-section h4 {
-    color: var(--accent-green);
+    color: white;
     font-family: var(--font-mono);
     margin-bottom: 1rem;
-    text-shadow: 0 0 8px var(--accent-green);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
 }
 
 .footer-section p {
@@ -905,7 +917,7 @@ body {
     text-align: center;
     padding-top: 2rem;
     border-top: 1px solid rgba(57, 255, 20, 0.2);
-    color: var(--text-muted);
+    color: white;
     font-family: var(--font-mono);
     font-size: 0.9rem;
 }
